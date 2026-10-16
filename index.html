@@ -15,7 +15,7 @@
     window.OneSignalDeferred = window.OneSignalDeferred || [];
     OneSignalDeferred.push(async function(OneSignal) {
       await OneSignal.init({
-        appId: "여기에_ONESIGNAL_APP_ID를_입력하세요", // ⬅️ 본인의 OneSignal App ID로 교체하세요!
+        appId: "3c844539-7072-41c7-a607-654dfbb6e76a", // ⬅️ 입력해주신 App ID가 반영되었습니다!
         safari_web_id: "",
         notifyButton: {
           enable: true,
@@ -164,4 +164,8 @@
         <!-- 기타 특이사항 (30자 제한) -->
         <div>
           <label class="block text-xs font-medium text-slate-600 mb-1">기타 특이사항 (30자 이내)</label>
-          <input type="text" id="
+          <input type="text" id="modal-remarks" maxlength="30" placeholder="특이사항 입력 (30자 이내)" class="w-full px-3 py-2 border rounded-lg text-sm">
+        </div>
+
+        <div class="flex gap-2 pt-2">
+          <button type="submit" class="flex-1 bg-
