@@ -9,13 +9,13 @@
   <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-  <!-- OneSignal Web Push SDK -->
+  <!-- OneSignal Web Push SDK (App ID 고정) -->
   <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
   <script>
     window.OneSignalDeferred = window.OneSignalDeferred || [];
     OneSignalDeferred.push(async function(OneSignal) {
       await OneSignal.init({
-        appId: "3c844539-7072-41c7-a607-654dfbb6e76a", // ⬅️ 본인의 OneSignal App ID로 교체하세요!
+        appId: "3c844539-7072-41c7-a607-654dfbb6e76a",
         safari_web_id: "",
         notifyButton: {
           enable: true,
@@ -26,7 +26,7 @@
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
 
-  <!-- 실시간 새 접수 알람 토스트 팝업 (화면이 켜져있을 때) -->
+  <!-- 실시간 새 접수 알람 토스트 팝업 -->
   <div id="toast-alert" class="fixed top-5 right-5 bg-indigo-600 text-white px-5 py-4 rounded-2xl shadow-2xl z-50 transform translate-y-[-150%] opacity-0 transition-all duration-300 flex items-center gap-3">
     <span class="text-2xl">🔔</span>
     <div>
@@ -40,57 +40,16 @@
     <div class="max-w-4xl mx-auto flex justify-between items-center">
       <div class="flex items-center gap-2">
         <h1 class="text-xl font-bold tracking-tight">📋 실시간 거래처 접수 관리</h1>
-        <button onclick="openConfigModal()" class="text-xs bg-indigo-700 hover:bg-indigo-800 px-2 py-1 rounded transition text-indigo-100">⚙️ 서버설정</button>
       </div>
       <span id="connection-status" class="text-xs bg-indigo-500 px-2 py-1 rounded-full">서버 연결 대기 중...</span>
     </div>
   </header>
 
-  <!-- 파이어베이스 설정 입력 모달 (최초 1회만 필요) -->
-  <div id="config-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl space-y-4">
-      <h3 class="text-lg font-bold text-slate-800">🛠️ 파이어베이스 서버 설정 (최초 1회)</h3>
-      <p class="text-xs text-slate-500">Firebase 콘솔에서 발급받은 웹 앱 설정값을 한 번만 입력해 주세요. 이 기기에 안전하게 저장되어 코드가 바뀌어도 유지됩니다.</p>
-      
-      <div class="space-y-3">
-        <div>
-          <label class="block text-xs font-medium text-slate-600 mb-1">API Key (apiKey)</label>
-          <input type="text" id="cfg-apiKey" class="w-full px-3 py-2 border rounded-lg text-sm" placeholder="AIzaSy...">
-        </div>
-        <div>
-          <label class="block text-xs font-medium text-slate-600 mb-1">Auth Domain (authDomain)</label>
-          <input type="text" id="cfg-authDomain" class="w-full px-3 py-2 border rounded-lg text-sm" placeholder="project.firebaseapp.com">
-        </div>
-        <div>
-          <label class="block text-xs font-medium text-slate-600 mb-1">Project ID (projectId)</label>
-          <input type="text" id="cfg-projectId" class="w-full px-3 py-2 border rounded-lg text-sm" placeholder="project-id">
-        </div>
-        <div>
-          <label class="block text-xs font-medium text-slate-600 mb-1">Storage Bucket (storageBucket)</label>
-          <input type="text" id="cfg-storageBucket" class="w-full px-3 py-2 border rounded-lg text-sm" placeholder="project.appspot.com">
-        </div>
-        <div>
-          <label class="block text-xs font-medium text-slate-600 mb-1">Messaging Sender ID (messagingSenderId)</label>
-          <input type="text" id="cfg-messagingSenderId" class="w-full px-3 py-2 border rounded-lg text-sm" placeholder="123456789">
-        </div>
-        <div>
-          <label class="block text-xs font-medium text-slate-600 mb-1">App ID (appId)</label>
-          <input type="text" id="cfg-appId" class="w-full px-3 py-2 border rounded-lg text-sm" placeholder="1:123:web:abc">
-        </div>
-      </div>
-
-      <div class="flex gap-2 pt-2">
-        <button onclick="saveConfig()" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg text-sm font-medium transition">저장 및 연결하기</button>
-        <button onclick="closeConfigModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg text-sm transition">닫기</button>
-      </div>
-    </div>
-  </div>
-
   <!-- 상세 페이지 (상세 처리 내역 모달) -->
   <div id="detail-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl space-y-5 max-h-[90vh] overflow-y-auto">
       <div class="flex justify-between items-center border-b pb-3">
-        <h3 id="modal-client-title" class="text-lg font-bold text-slate-800">📋 상세 처리 내역</h3>
+        <h3 class="text-lg font-bold text-slate-800">📋 상세 처리 내역</h3>
         <button onclick="closeDetailModal()" class="text-slate-400 hover:text-slate-600 text-xl font-bold">&times;</button>
       </div>
 
@@ -200,9 +159,9 @@
       </form>
     </section>
 
-    <!-- 현황판, 전일내역 보기 버튼 및 검색 -->
+    <!-- 현황판, 지난 내역 보기 버튼 및 검색 -->
     <section class="flex flex-col md:flex-row justify-between items-stretch md:items-center gap-3">
-      <!-- 상태 탭 필터 및 전일 내역 보기 버튼 -->
+      <!-- 상태 탭 필터 및 지난 내역 보기 버튼 -->
       <div class="flex flex-wrap items-center gap-2">
         <div class="flex bg-slate-200 p-1 rounded-xl text-sm font-medium">
           <button type="button" onclick="setFilter('all')" id="tab-all" class="px-3 py-1.5 rounded-lg bg-white shadow-sm transition">전체</button>
@@ -211,12 +170,12 @@
           <button type="button" onclick="setFilter('처리 완료')" id="tab-처리 완료" class="px-3 py-1.5 rounded-lg text-slate-600 transition">처리완료</button>
         </div>
         <button type="button" onclick="toggleArchiveView()" id="archive-btn" class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white text-sm font-bold rounded-xl shadow-sm transition">
-          📂 전일(과거) 내역 보기
+          📂 지난 내역 보기
         </button>
       </div>
-      <!-- 검색창 (년월일, 거래처 기준 통합 다중검색) -->
+      <!-- 검색창 (월별, 월일별, 거래처별 다중검색 지원) -->
       <div>
-        <input type="text" id="search-input" oninput="renderList()" placeholder="검색 (예: 26.10.15 삼호)..." class="w-full md:w-64 px-3 py-2 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+        <input type="text" id="search-input" oninput="renderList()" placeholder="검색 (예: 26.10 삼호)..." class="w-full md:w-64 px-3 py-2 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
       </div>
     </section>
 
@@ -231,67 +190,28 @@
 
   <!-- 스크립트 로직 -->
   <script>
+    // 제공해주신 파이어베이스 고정 설정값
+    const firebaseConfig = {
+      apiKey: "AIzaSyCWdZSCvmElSdVcQ5NtqkYgTvpuhaoaoA0",
+      authDomain: "samho-as.firebaseapp.com",
+      projectId: "samho-as",
+      storageBucket: "samho-as.firebasestorage.app",
+      messagingSenderId: "825148458599",
+      appId: "1:825148458599:web:faad0eb0e9dbe76b75f6c2",
+      measurementId: "G-FJPW0LY8FD"
+    };
+
     let db = null;
     let requestsData = [];
     let currentFilter = 'all';
-    let isArchiveMode = false; // 전일 내역 보기 모드 여부
+    let isArchiveMode = false; // 지난 내역 보기 모드 여부
     let unsubscribe = null;
     let isInitialLoad = true;
 
-    // 앱 실행 시 저장된 설정값 불러오기
+    // 앱 실행 시 자동 연결
     window.addEventListener('DOMContentLoaded', () => {
-      const savedConfig = localStorage.getItem('my_firebase_config');
-      if (savedConfig) {
-        try {
-          const config = JSON.parse(savedConfig);
-          initFirebase(config);
-        } catch(e) {
-          openConfigModal();
-        }
-      } else {
-        openConfigModal();
-      }
+      initFirebase(firebaseConfig);
     });
-
-    function openConfigModal() {
-      const savedConfig = localStorage.getItem('my_firebase_config');
-      if (savedConfig) {
-        try {
-          const cfg = JSON.parse(savedConfig);
-          document.getElementById('cfg-apiKey').value = cfg.apiKey || '';
-          document.getElementById('cfg-authDomain').value = cfg.authDomain || '';
-          document.getElementById('cfg-projectId').value = cfg.projectId || '';
-          document.getElementById('cfg-storageBucket').value = cfg.storageBucket || '';
-          document.getElementById('cfg-messagingSenderId').value = cfg.messagingSenderId || '';
-          document.getElementById('cfg-appId').value = cfg.appId || '';
-        } catch(e) {}
-      }
-      document.getElementById('config-modal').classList.remove('hidden');
-    }
-
-    function closeConfigModal() {
-      document.getElementById('config-modal').classList.add('hidden');
-    }
-
-    function saveConfig() {
-      const config = {
-        apiKey: document.getElementById('cfg-apiKey').value.trim(),
-        authDomain: document.getElementById('cfg-authDomain').value.trim(),
-        projectId: document.getElementById('cfg-projectId').value.trim(),
-        storageBucket: document.getElementById('cfg-storageBucket').value.trim(),
-        messagingSenderId: document.getElementById('cfg-messagingSenderId').value.trim(),
-        appId: document.getElementById('cfg-appId').value.trim()
-      };
-
-      if (!config.apiKey || !config.projectId) {
-        alert("API Key와 Project ID는 필수 입력 항목입니다.");
-        return;
-      }
-
-      localStorage.setItem('my_firebase_config', JSON.stringify(config));
-      closeConfigModal();
-      initFirebase(config);
-    }
 
     function initFirebase(config) {
       try {
@@ -304,7 +224,6 @@
         }
       } catch (error) {
         alert("파이어베이스 초기화 오류: " + error.message);
-        openConfigModal();
       }
     }
 
@@ -378,7 +297,7 @@
           renderList();
         }, (error) => {
           console.error("Firestore 오류: ", error);
-          document.getElementById('connection-status').innerText = '🔴 연결 오류 (설정 확인)';
+          document.getElementById('connection-status').innerText = '🔴 연결 오류';
           document.getElementById('connection-status').className = 'text-xs bg-rose-500 px-2 py-1 rounded-full';
         });
     }
@@ -387,8 +306,7 @@
     document.getElementById('request-form').addEventListener('submit', (e) => {
       e.preventDefault();
       if (!db) {
-        alert("서버에 연결되어 있지 않습니다. 우측 상단 [⚙️ 서버설정]을 확인해주세요.");
-        openConfigModal();
+        alert("서버에 연결되어 있지 않습니다.");
         return;
       }
 
@@ -526,211 +444,4 @@
       const imageBase64 = document.getElementById('modal-image-base64').value;
       const remarks = document.getElementById('modal-remarks').value.trim();
 
-      const finalStatus = (statusInput === '대기중') ? '대기중' : '처리 완료';
-
-      if (finalStatus !== '대기중') {
-        if (!tonerName || qtyBk === '' || qtyC === '' || qtyM === '' || qtyY === '' || wasteToner === '' || !imageBase64) {
-          alert("⚠️ 필수 입력 항목(토너명, 수량, 폐토너통, 카운터 사진)을 모두 채워야 저장할 수 있습니다!");
-          return;
-        }
-      }
-
-      db.collection("client_requests").doc(id).update({
-        status: finalStatus,
-        tonerName: tonerName,
-        qtyBk: parseInt(qtyBk) || 0,
-        qtyC: parseInt(qtyC) || 0,
-        qtyM: parseInt(qtyM) || 0,
-        qtyY: parseInt(qtyY) || 0,
-        wasteToner: parseInt(wasteToner) || 0,
-        imageBase64: imageBase64,
-        remarks: remarks
-      }).then(() => {
-        closeDetailModal();
-      }).catch((error) => {
-        alert("저장 실패: " + error.message);
-      });
-    }
-
-    // 항목 삭제 함수
-    function deleteRequest(id, event) {
-      if (event) event.stopPropagation();
-      if (!db) return;
-      if (confirm("정말 이 접수 내역을 삭제하시겠습니까?")) {
-        db.collection("client_requests").doc(id).delete().catch((error) => {
-          alert("삭제 실패: " + error.message);
-        });
-      }
-    }
-
-    // 필터 변경 탭 설정
-    function setFilter(status) {
-      currentFilter = status;
-      ['all', '대기중', '수락 완료', '처리 완료'].forEach(s => {
-        const btn = document.getElementById(`tab-${s}`);
-        if (s === status) {
-          btn.className = "px-3 py-1.5 rounded-lg bg-white shadow-sm text-indigo-600 font-semibold transition";
-        } else {
-          btn.className = "px-3 py-1.5 rounded-lg text-slate-600 transition";
-        }
-      });
-      renderList();
-    }
-
-    // 당일 내역 vs 전일(과거) 내역 보기 모드 토글
-    function toggleArchiveView() {
-      isArchiveMode = !isArchiveMode;
-      const btn = document.getElementById('archive-btn');
-      if (isArchiveMode) {
-        btn.className = "px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-xl shadow-sm transition";
-        btn.innerText = "📅 오늘 당일 내역 보기";
-      } else {
-        btn.className = "px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white text-sm font-bold rounded-xl shadow-sm transition";
-        btn.innerText = "📂 전일(과거) 내역 보기";
-      }
-      renderList();
-    }
-
-    // 날짜 포맷팅 함수
-    function formatTimestamp(timestamp) {
-      if (!timestamp) return '방금 전';
-      const date = timestamp.toDate();
-      const yy = String(date.getFullYear()).slice(2);
-      const mm = String(date.getMonth() + 1).padStart(2, '0');
-      const dd = String(date.getDate()).padStart(2, '0');
-      const hh = String(date.getHours()).padStart(2, '0');
-      const min = String(date.getMinutes()).padStart(2, '0');
-      return `${yy}.${mm}.${dd} ${hh}:${min}`;
-    }
-
-    // 오늘 날짜 문자열 추출 (YYYY-MM-DD 형식)
-    function getTodayDateString(timestamp) {
-      if (!timestamp) return '';
-      const date = timestamp.toDate();
-      const yyyy = date.getFullYear();
-      const mm = String(date.getMonth() + 1).padStart(2, '0');
-      const dd = String(date.getDate()).padStart(2, '0');
-      return `${yyyy}-${mm}-${dd}`;
-    }
-
-    // 리스트 렌더링 화면 구성 (자정 기준 분류 및 다중 키워드 AND 검색 적용)
-    function renderList() {
-      const listContainer = document.getElementById('request-list');
-      const rawSearchQuery = document.getElementById('search-input').value.toLowerCase().trim();
-      const searchKeywords = rawSearchQuery ? rawSearchQuery.split(/\s+/) : [];
-
-      // 현재 기기의 오늘 날짜 계산
-      const now = new Date();
-      const todayString = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-
-      const filtered = requestsData.filter(item => {
-        const itemDateStr = getTodayDateString(item.createdAt);
-        
-        // 자정(00시) 기준 오늘 여부 판별 (아직 날짜 정보가 없으면 오늘로 간주)
-        const isToday = itemDateStr ? (itemDateStr === todayString) : true;
-
-        // 아카이브 모드(전일 내역 보기)일 때는 오늘이 아닌 항목만, 당일 모드일 때는 오늘 항목만 필터링
-        if (isArchiveMode) {
-          if (isToday) return false;
-        } else {
-          if (!isToday) return false;
-        }
-
-        const matchesFilter = (currentFilter === 'all') || (item.status === currentFilter);
-        const formattedDate = formatTimestamp(item.createdAt).toLowerCase();
-        
-        // 검색 대상 텍스트 (년월일, 거래처명, 내용, 연락처, 토너명, 특이사항 모두 포함)
-        const targetText = [
-          item.clientName || '',
-          item.content || '',
-          item.contact || '',
-          item.tonerName || '',
-          item.remarks || '',
-          formattedDate
-        ].join(' ').toLowerCase();
-
-        const matchesSearch = searchKeywords.every(keyword => targetText.includes(keyword));
-        return matchesFilter && matchesSearch;
-      });
-
-      if (filtered.length === 0) {
-        const emptyMsg = isArchiveMode ? "조회된 전일(과거) 내역이 없습니다." : "오늘 등록된 접수 내용이 없습니다.";
-        listContainer.innerHTML = `<div class="bg-white p-8 rounded-2xl border border-slate-100 text-center text-slate-400 text-sm">${emptyMsg}</div>`;
-        return;
-      }
-
-      let html = '';
-      filtered.forEach(item => {
-        let badgeColor = 'bg-amber-100 text-amber-700';
-        let actionButtonHtml = '';
-
-        if (item.status === '대기중') {
-          badgeColor = 'bg-amber-100 text-amber-700';
-          actionButtonHtml = `<button onclick="handleAccept('${item.id}', event)" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition">수락하기</button>`;
-        } else if (item.status === '수락 완료') {
-          badgeColor = 'bg-blue-100 text-blue-700';
-          actionButtonHtml = `<button onclick="openDetailModal('${item.id}', event)" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-blue-50 text-blue-600 hover:bg-blue-100 transition">상세보기/수정</button>`;
-        } else if (item.status === '처리 완료') {
-          badgeColor = 'bg-emerald-100 text-emerald-700';
-          actionButtonHtml = `<button onclick="openDetailModal('${item.id}', event)" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 transition">상세보기/수정</button>`;
-        }
-
-        const formattedTime = formatTimestamp(item.createdAt);
-        
-        let contactHtml = '';
-        if (item.contact) {
-          const escapedContact = escapeHtml(item.contact);
-          contactHtml = `
-            <a href="tel:${escapedContact}" onclick="event.stopPropagation()" class="inline-flex items-center gap-1 text-xs text-rose-600 bg-rose-50 hover:bg-rose-100 px-2 py-0.5 rounded transition font-medium" title="전화 걸기">
-              📞 ${escapedContact}
-            </a>
-          `;
-        }
-
-        let detailsBadge = '';
-        if (item.tonerName || item.qtyBk > 0 || item.qtyC > 0 || item.qtyM > 0 || item.qtyY > 0 || item.wasteToner > 0 || item.imageBase64 || item.remarks) {
-          detailsBadge = `
-            <div class="text-xs text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-lg mt-1 inline-flex items-center gap-2 flex-wrap font-medium">
-              ${item.tonerName ? `<span>🏷️ 토너명: <strong>${escapeHtml(item.tonerName)}</strong></span>` : ''}
-              <span>[수량: BK:${item.qtyBk || 0}, C:${item.qtyC || 0}, M:${item.qtyM || 0}, Y:${item.qtyY || 0}]</span>
-              <span>🗑️ 폐토너통: ${item.wasteToner || 0}개</span>
-              ${item.imageBase64 ? `<span class="text-emerald-600 font-bold">📷 사진첨부됨</span>` : ''}
-              ${item.remarks ? `<span>📝 특이사항: ${escapeHtml(item.remarks)}</span>` : ''}
-            </div>
-          `;
-        }
-
-        html += `
-          <div onclick="openDetailModal('${item.id}', event)" class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 cursor-pointer hover:border-indigo-200 transition">
-            <div class="space-y-1 flex-1">
-              <div class="flex items-center gap-2 flex-wrap">
-                <span class="text-xs font-bold px-2 py-0.5 rounded-full ${badgeColor}">${item.status}</span>
-                <span class="font-bold text-slate-800 text-base">${escapeHtml(item.clientName)}</span>
-                ${contactHtml}
-                <span class="text-xs text-slate-400">🕒 ${formattedTime}</span>
-              </div>
-              <p class="text-sm text-slate-600 whitespace-pre-wrap">${escapeHtml(item.content)}</p>
-              ${detailsBadge}
-            </div>
-            <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
-              ${actionButtonHtml}
-              <button onclick="deleteRequest('${item.id}', event)" class="px-3 py-1.5 rounded-lg text-xs font-medium text-rose-500 bg-rose-50 hover:bg-rose-100 transition">
-                삭제
-              </button>
-            </div>
-          </div>
-        `;
-      });
-
-      listContainer.innerHTML = html;
-    }
-
-    function escapeHtml(str) {
-      if (!str) return '';
-      return str.replace(/[&<>'"]/g, 
-        tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
-      );
-    }
-  </script>
-</body>
-</html>
+      const finalStatus = (statusInput === '
